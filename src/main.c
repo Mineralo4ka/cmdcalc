@@ -1,54 +1,50 @@
 #include <stdio.h>
-#include <string.h>
-#define NMAX 100
+#include <stdlib.h>
+#include "function.h"
 
-struct stack {
-    char elem[NMAX];
-    int top; //вершина
-};
-
-void push(struct stack *stk, float f)
+int main(int argc, char **argv)
 {
-    if(stk->top < NMAX) {
-        stk->elem[stk->top] = f;
-        stk->top++;
-    } else {
-        printf("Стек полон, количество элементов: %d !\n", stk->top);
-    }
-}
-
-float pop(struct stack *stk)
-{
-    float elem;
-    if((stk->top) > 0) {
-        stk->top--;
-        elem = stk->elem[stk->top];
-        return elem;
-    } else {
-        printf("Стек пуст!\n");
-        return 0;
-    }
-}
-
-int main(int argc, char **argv) 
-{
-    if(argc <= 1) {
-        printf("Некорректные значения\n");
+    if (argc != 2) {
         return 1;
     }
 
-    //float num[128];
-    //char ops[128];
+    char *string;
+    string = malloc(sizeof(char) * 300);
+    int z = 0, i = 0, a = 0;
 
-    for (int i = 1; i < argc; ++i)
-    {
-        printf("%s ", argv[i]);
+    for (i = 0; argv[1][i] != '\0'; i++) {
+        if (argv[1][i] == ' ') {
+            continue;
+        }
+        if (chcmp(argv[1][i], "()+-*/,.0123456789")) {   
+            if (argv[1][i] != ',') {
+                string[z] = argv[1][i];
+            } else {
+                string[z] = '.';
+            }
+            z++;
+
+            if (argv[1][i] == '(') {
+                a++;
+            } else if (argv[1][i] == ')' && --a < 0) {
+                    printf("Ошибка ввода. Скобка закрыта до открытия\n");
+                    return 1;
+                }
+        } else {
+            printf("Ошибка ввода. Запрещенный символ\n");
+            return 1;
+        }
     }
-    printf("\n");
-    //for(int i = 1; i < argc; i++) {
-    //    if (sscanf(argv[i], "%d", &a) =) 
-    //}
- 
+
+    if (a != 0) {
+        printf("Ошибка ввода. Нарушен баланс скобок\n");
+        return 1;
+    }
+
+    if (check(string) == 0){
+        double result = solution(string, 0, z - 1);
+        printf("\t%s = %.3lf\n", string, result);
+    }
     
     return 0;
 }
